@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.master
+    ports:
+      - 8000:8000
+      - 4505:4505
   salt-minion:
     build:
       context: .

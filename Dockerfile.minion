@@ -10,5 +10,5 @@ RUN yum install -y epel-release && \
 
 RUN sed -i "s|#master: salt|master: salt-master|g" /etc/salt/minion
 
-ENTRYPOINT ["salt-minion", "-l", "debug"]
+ENTRYPOINT ["salt-minion", "-l", "info"]
 

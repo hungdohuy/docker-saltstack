@@ -4,10 +4,17 @@ MAINTAINER tim@cyface.com
 RUN yum install -y epel-release && \
     yum install -y --nogpgcheck https://repo.saltstack.com/yum/redhat/salt-repo-latest-2.el7.noarch.rpm && \
     yum update -y && \
-    yum install -y virt-what salt-master && \
+    yum install -y virt-what salt-master salt-api && \
     yum clean all && \
     rm -rf /var/cache/yum
 
-RUN sed -i "s|#auto_accept: False|auto_accept: True|g" /etc/salt/master
+RUN useradd -d /home/saltuser saltuser && \
+    echo "saltuser:saltpassword"|chpasswd && \
+    sed -i "s|#auto_accept: False|auto_accept: True|g" /etc/salt/master && \
+    sed -i 's/#external_auth:/external_auth:/g' /etc/salt/master && \
+    sed -i 's/#  pam:/  pam:/g' /etc/salt/master && \
+    sed -i 's/#    fred:/    saltuser:/g' /etc/salt/master && \
+    sed -i 's/#      - test.*/      - .*/g' /etc/salt/master && \
+    printf "rest_cherrypy:\n  port: 8000\n  disable_ssl: true" >> /etc/salt/master
 
-ENTRYPOINT ["salt-master", "-l", "debug"]
+ENTRYPOINT ["salt-master", "-l", "info"]
